@@ -3,6 +3,7 @@ import { catchAsync } from "../utils/catchAsync.utils";
 import { NextFunction, Request, Response } from "express";
 import User from "../model/usermodel";
 import { sendResponse } from "../utils/sendResponse.utils";
+import { hashPassword } from "../utils/bcrypt.utils";
 
 
 //*signup
@@ -15,6 +16,8 @@ export const register=catchAsync(
             password,
             phone
         })
+        const hashPass= await hashPassword(password);
+        user.password=hashPass;
     await user.save();
     sendResponse(res,{
         message:"Account created",
