@@ -14,6 +14,7 @@ export const generateJwtToken=(payload:IJwtPayLoad)=>{
         throw error;
     }
 }
+
 //verify jwt token
 
 export const verifyJwtToken=(token:string):IJwtReturn=>{
