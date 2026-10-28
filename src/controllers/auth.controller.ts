@@ -13,12 +13,17 @@ import ENV_CONFIG from "../config/env.config";
 export const register = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { full_name, email, password, phone } = req.body;
+     const file=req.file();
+     if(file){
+      const {path,public_id}=await upload
+     }
     const user = new User({
       full_name,
       email,
       password,
       phone,
     });
+   
     const hashPass = await hashPassword(password);
     user.password = hashPass;
     await user.save();
