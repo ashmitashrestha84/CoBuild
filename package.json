@@ -22,12 +22,14 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.7.0",
-    "mongoose": "^9.10.4"
+    "mongoose": "^9.10.4",
+    "multer": "^2.5.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.3.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
