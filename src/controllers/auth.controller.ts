@@ -8,22 +8,33 @@ import appError from "../utils/appError.utils";
 import { IJwtPayLoad } from "../types/globaltypes";
 import { generateJwtToken } from "../utils/jwt.utils";
 import ENV_CONFIG from "../config/env.config";
+import { upload } from "../utils/cloudinary.utils";
+
+const uploadFolder = "/profile_images";
 
 //*signup
 export const register = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    console.log(req.file);
+
     const { full_name, email, password, phone } = req.body;
-     const file=req.file();
-     if(file){
-      const {path,public_id}=await upload
-     }
+    const file = req.file;
+
     const user = new User({
       full_name,
       email,
       password,
       phone,
     });
-   
+    if (file) {
+      const { path, public_id } = await upload(file, uploadFolder);
+
+      user.profile_image = {
+        path,
+        public_id,
+      };
+    }
     const hashPass = await hashPassword(password);
     user.password = hashPass;
     await user.save();
