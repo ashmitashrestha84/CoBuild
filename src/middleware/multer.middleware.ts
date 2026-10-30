@@ -30,9 +30,6 @@ export const uploader = () => {
     file: Express.Multer.File,
     callback: FileFilterCallback,
   ) => {
-    console.log("Original name:", file.originalname);
-    console.log("MIME type:", file.mimetype);
-
     const allowed_mime_type = [
       "image/jpeg",
       "image/png",
