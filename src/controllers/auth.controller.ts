@@ -9,6 +9,8 @@ import { IJwtPayLoad } from "../types/globaltypes";
 import { generateJwtToken } from "../utils/jwt.utils";
 import ENV_CONFIG from "../config/env.config";
 import { upload } from "../utils/cloudinary.utils";
+import { sendEmail } from "../utils/emailservice.utils";
+import { accountCreatedHtml, newLoginDetectedHtml } from "../utils/emailtemplate.utils";
 
 const uploadFolder = "/profile_images";
 
@@ -35,6 +37,16 @@ export const register = catchAsync(
         public_id,
       };
     }
+    sendEmail({
+      to: user.email,
+      subject: "Account Created",
+      html: accountCreatedHtml({
+        full_name: user.full_name,
+        email: user.email,
+        createdAt: user.createdAt,
+      }),
+    });
+
     const hashPass = await hashPassword(password);
     user.password = hashPass;
     await user.save();
@@ -69,6 +81,16 @@ export const login = catchAsync(
       secure: ENV_CONFIG.NODE_ENV === "development" ? false : true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: ENV_CONFIG.NODE_ENV === "development" ? "lax" : "none", //production->none
+    });
+    sendEmail({
+      to: user.email,
+      subject: "Account Created",
+      html: newLoginDetectedHtml({
+        full_name: user.full_name,
+        email: user.email,
+        loginTime: new Date(Date.now()),
+        device: req.headers["user-agent"]!!,
+      }),
     });
     const { password: p, ...rest } = user.toObject();
 
