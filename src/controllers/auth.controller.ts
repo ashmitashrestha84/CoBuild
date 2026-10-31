@@ -9,20 +9,20 @@ import { IJwtPayLoad } from "../types/globaltypes";
 import { generateJwtToken } from "../utils/jwt.utils";
 import ENV_CONFIG from "../config/env.config";
 import { upload } from "../utils/cloudinary.utils";
-import { sendEmail } from "../utils/emailservice.utils";
-import { accountCreatedHtml, newLoginDetectedHtml } from "../utils/emailtemplate.utils";
+import { sendEmail } from "../utils/emailService.utils";
+import {
+  accountCreatedHtml,
+  newLoginDetectedHtml,
+} from "../utils/emailTemplate.utils";
+import { resolveTlsa } from "node:dns/promises";
 
 const uploadFolder = "/profile_images";
 
 //*signup
 export const register = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
-    console.log(req.file);
-
     const { full_name, email, password, phone } = req.body;
     const file = req.file;
-
     const user = new User({
       full_name,
       email,
@@ -101,6 +101,37 @@ export const login = catchAsync(
         user: rest,
         access_token,
       },
+    });
+  },
+);
+
+//* get me
+export const getMe = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findOne({ id: req.user._id });
+    if (!user) {
+      throw new appError("User not found", 404);
+    }
+    sendResponse(res, {
+      message: "User fetched successfully",
+      statusCode: 200,
+      data: user,
+    });
+  },
+);
+
+//*logout
+export const logout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.clearCookie("access_token", {
+      httpOnly: ENV_CONFIG.NODE_ENV === "development" ? false : true, 
+      secure: ENV_CONFIG.NODE_ENV === "development" ? false : true,
+      sameSite: ENV_CONFIG.NODE_ENV === "development" ? "lax" : "none",
+    });
+    sendResponse(res, {
+      message: "User logout successfully",
+      statusCode: 200,
+      data: null,
     });
   },
 );
