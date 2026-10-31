@@ -1,4 +1,3 @@
-
 import { catchAsync } from "../utils/catchAsync.utils";
 import { NextFunction, Request, Response } from "express";
 import User from "../model/usermodel";
@@ -202,6 +201,37 @@ export const forgotPassword = catchAsync(
       statusCode: 200,
       message: "Password reset link sent to your email",
       data: user,
+    });
+  },
+);
+
+//* reset password
+export const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { token, newPassword, conformPassword } = req.body;
+    if (newPassword !== conformPassword) {
+      throw new appError(
+        "New Password and Conform Password doesnot matched",
+        404,
+      );
+    }
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: new Date() },
+    }).select("+resetPasswordToken +resetPasswordExpires");
+    if (!user) {
+      throw new appError("Invalid or expired reset token", 400);
+    }
+
+    const hashPass = await hashPassword(newPassword);
+    user.password = hashPass;
+    await user.save();
+    sendResponse(res, {
+      statusCode: 200,
+      message: "Password reset successfully",
+      data:user,
     });
   },
 );
