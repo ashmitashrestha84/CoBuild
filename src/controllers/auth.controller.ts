@@ -14,7 +14,6 @@ import {
   accountCreatedHtml,
   newLoginDetectedHtml,
 } from "../utils/emailTemplate.utils";
-import { resolveTlsa } from "node:dns/promises";
 
 const uploadFolder = "/profile_images";
 
@@ -108,7 +107,7 @@ export const login = catchAsync(
 //* get me
 export const getMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user = await User.findOne({ id: req.user._id });
+    const user = await User.findOne({ _id: req.user._id });
     if (!user) {
       throw new appError("User not found", 404);
     }
@@ -124,12 +123,45 @@ export const getMe = catchAsync(
 export const logout = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     res.clearCookie("access_token", {
-      httpOnly: ENV_CONFIG.NODE_ENV === "development" ? false : true, 
+      httpOnly: ENV_CONFIG.NODE_ENV === "development" ? false : true,
       secure: ENV_CONFIG.NODE_ENV === "development" ? false : true,
       sameSite: ENV_CONFIG.NODE_ENV === "development" ? "lax" : "none",
     });
     sendResponse(res, {
       message: "User logout successfully",
+      statusCode: 200,
+      data: null,
+    });
+  },
+);
+
+
+//*change password
+export const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findOne({ _id: req.user._id }).select("+password");
+    if (!user) {
+      throw new appError("User doesnot exist", 404);
+    }
+    const isPassMatched = await comparePassword(currentPassword, user.password);
+    if (isPassMatched) {
+      throw new appError("Credentials don't match", 400);
+    }
+    const isSamePassword = await comparePassword(newPassword, user.password);
+    if (isSamePassword) {
+      throw new appError(
+        "Current password must be different from current password",
+        400,
+      );
+    }
+
+    const hashPass = await hashPassword(newPassword);
+    user.password = hashPass;
+    await user.save();
+
+    sendResponse(res, {
+      message: "Password changed successfully",
       statusCode: 200,
       data: null,
     });

@@ -4,7 +4,7 @@ import appError from "../utils/appError.utils";
 import { verifyJwtToken } from "../utils/jwt.utils";
 import ENV_CONFIG from "../config/env.config";
 
-export const authenticate = (role: Role[]) => {
+export const authenticate = (role?: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       //get access token
