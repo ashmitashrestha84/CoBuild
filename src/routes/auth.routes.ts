@@ -6,6 +6,7 @@ import {
   login,
   logout,
   register,
+  resetPassword,
 } from "../controllers/auth.controller";
 import { uploader } from "../middleware/multer.middleware";
 import { authenticate } from "../middleware/auth.middleware";
@@ -18,4 +19,5 @@ router.get("/me", authenticate(), getMe);
 router.post("/logout", authenticate(), logout);
 router.patch("/change-password", authenticate(), changePassword);
 router.post("/forgot-password", forgotPassword);
+router.patch("/reset-password", resetPassword);
 export default router;
