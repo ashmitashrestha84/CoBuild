@@ -221,3 +221,106 @@ export const newLoginDetectedHtml = ({
 
   return html;
 };
+
+export const forgotPasswordHtml = ({
+  full_name,
+  resetToken,
+}: {
+  full_name: string;
+  resetToken: string;
+}) => {
+  const resetLink = `${ENV_CONFIG.FRONT_END_URL}/auth/reset-password?token=${encodeURIComponent(resetToken)}`;
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reset Password</title>
+</head>
+
+<body style="margin:0;padding:0;background:#f4f4f7;font-family:Arial,Helvetica,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f7;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.08);">
+
+          <tr>
+            <td style="background:#7c3aed;padding:32px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:28px;">
+                🔐 Password Reset
+              </h1>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:40px 32px;color:#333333;">
+
+              <h2 style="margin-top:0;">
+                Hello ${full_name},
+              </h2>
+
+              <p style="font-size:16px;line-height:1.7;margin:16px 0;">
+                We received a request to reset the password for your
+                ${ENV_CONFIG.APP_NAME} account.
+              </p>
+
+              <p style="font-size:16px;line-height:1.7;">
+                Click the button below to create a new password.
+                For your security, this link will expire in 10 minutes.
+              </p>
+
+              <div style="text-align:center;margin:36px 0;">
+                <a
+                  href="${resetLink}"
+                  target="_blank"
+                  style="display:inline-block;background:#7c3aed;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;"
+                >
+                  Reset Password
+                </a>
+              </div>
+
+              <p style="font-size:14px;line-height:1.7;color:#555555;">
+                If the button doesn't work, copy and paste this link into
+                your browser:
+              </p>
+
+              <p style="font-size:13px;line-height:1.7;overflow-wrap:anywhere;">
+                <a href="${resetLink}" style="color:#7c3aed;">
+                  ${resetLink}
+                </a>
+              </p>
+
+              <div style="padding:18px;background:#fff7ed;border-left:4px solid #f59e0b;border-radius:6px;margin:24px 0;">
+                <strong>Didn't request a password reset?</strong>
+                <p style="margin:10px 0 0;line-height:1.6;color:#555555;">
+                  You can safely ignore this email. Your password will not
+                  change unless the reset process is completed successfully.
+                </p>
+              </div>
+
+              <p style="font-size:14px;color:#666666;margin-top:32px;">
+                Thanks,<br />
+                <strong>${ENV_CONFIG.APP_NAME}</strong>
+              </p>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background:#faf5ff;padding:20px;text-align:center;font-size:12px;color:#777777;">
+              © ${new Date().getFullYear()} ${ENV_CONFIG.APP_NAME}. All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+  return html;
+};

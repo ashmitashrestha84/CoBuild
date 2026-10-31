@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+
 import { catchAsync } from "../utils/catchAsync.utils";
 import { NextFunction, Request, Response } from "express";
 import User from "../model/usermodel";
@@ -12,6 +12,7 @@ import { upload } from "../utils/cloudinary.utils";
 import { sendEmail } from "../utils/emailService.utils";
 import {
   accountCreatedHtml,
+  forgotPasswordHtml,
   newLoginDetectedHtml,
 } from "../utils/emailTemplate.utils";
 
@@ -135,7 +136,6 @@ export const logout = catchAsync(
   },
 );
 
-
 //*change password
 export const changePassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -145,7 +145,7 @@ export const changePassword = catchAsync(
       throw new appError("User doesnot exist", 404);
     }
     const isPassMatched = await comparePassword(currentPassword, user.password);
-    if (isPassMatched) {
+    if (!isPassMatched) {
       throw new appError("Credentials don't match", 400);
     }
     const isSamePassword = await comparePassword(newPassword, user.password);
@@ -164,6 +164,44 @@ export const changePassword = catchAsync(
       message: "Password changed successfully",
       statusCode: 200,
       data: null,
+    });
+  },
+);
+
+import crypto from "crypto";
+
+//* forgot password
+export const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new appError("User does not exist", 404);
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+    await user.save({ validateBeforeSave: false });
+    await sendEmail({
+      to: user.email,
+      subject: "Reset Your CoBuild Password",
+      html: forgotPasswordHtml({
+        full_name: user.full_name,
+        resetToken,
+      }),
+    });
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: "Password reset link sent to your email",
+      data: user,
     });
   },
 );

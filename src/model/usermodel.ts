@@ -35,10 +35,18 @@ const userSchema = new mongoose.Schema(
       required: false,
       maxLength: [10, "phone number at most be 10 digit long"],
     },
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      select: false,
+    },
   },
   { timestamps: true },
 );
 
-const User = mongoose.model("user",userSchema);
+const User = mongoose.model("user", userSchema);
 
 export default User;

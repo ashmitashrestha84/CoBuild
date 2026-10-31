@@ -15,5 +15,5 @@ router.post("/register", upload.single("profile_image"), register);
 router.post("/login", login);
 router.get("/me", authenticate(), getMe);
 router.post("/logout", authenticate(), logout);
-router.patch("/changepassword", authenticate(), changePassword);
+router.patch("/change-password", authenticate(), changePassword);
 export default router;
