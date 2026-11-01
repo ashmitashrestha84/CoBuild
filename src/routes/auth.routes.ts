@@ -10,13 +10,22 @@ import {
 } from "../controllers/auth.controller";
 import { uploader } from "../middleware/multer.middleware";
 import { authenticate } from "../middleware/auth.middleware";
-import { validate } from "zod";
-import { registerUserSchema } from "../validators/auth.validator";
+
+import {
+  loginUserSchema,
+  registerUserSchema,
+} from "../validators/auth.validator";
+import { validate } from "../middleware/validator.middleware";
 const upload = uploader();
 
 const router = express.Router();
-router.post("/register", upload.single("profile_image"),validate(registerUserSchema), register);
-router.post("/login", login);
+router.post(
+  "/register",
+  upload.single("profile_image"),
+  validate(registerUserSchema),
+  register,
+);
+router.post("/login", validate(loginUserSchema), login);
 router.get("/me", authenticate(), getMe);
 router.post("/logout", authenticate(), logout);
 router.patch("/change-password", authenticate(), changePassword);
