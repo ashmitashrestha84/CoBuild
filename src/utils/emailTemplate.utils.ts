@@ -413,4 +413,3 @@ export const verifyEmailHtml = ({
 
   return html;
 };
-```
