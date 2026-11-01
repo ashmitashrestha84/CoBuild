@@ -324,3 +324,93 @@ export const forgotPasswordHtml = ({
 
   return html;
 };
+
+export const verifyEmailHtml = ({
+  full_name,
+  verificationToken,
+}: {
+  full_name: string;
+  verificationToken: string;
+}) => {
+  const verificationLink = `${
+    ENV_CONFIG.FRONT_END_URL
+  }/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Your Email</title>
+</head>
+
+<body style="margin:0;padding:0;background:#f4f4f7;font-family:Arial,Helvetica,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0"
+    style="background:#f4f4f7;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0"
+          style="background:#ffffff;border-radius:12px;overflow:hidden;">
+
+          <tr>
+            <td style="background:#7c3aed;padding:32px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:28px;">
+                Verify Your Email
+              </h1>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:40px 32px;color:#333333;">
+
+              <h2>Hello ${full_name},</h2>
+
+              <p style="font-size:16px;line-height:1.7;">
+                Welcome to ${ENV_CONFIG.APP_NAME}!
+                Please verify your email address to confirm that you own
+                this email account.
+              </p>
+
+              <div style="text-align:center;margin:36px 0;">
+                <a href="${verificationLink}"
+                  style="display:inline-block;background:#7c3aed;color:#ffffff;
+                  text-decoration:none;padding:14px 28px;border-radius:8px;
+                  font-weight:bold;">
+                  Verify Email Address
+                </a>
+              </div>
+
+              <p style="font-size:14px;line-height:1.7;color:#555555;">
+                This verification link will expire in 15 minutes.
+                If you did not create an account with ${ENV_CONFIG.APP_NAME},
+                you can safely ignore this email.
+              </p>
+
+              <p style="font-size:14px;color:#666666;margin-top:32px;">
+                Thanks,<br />
+                <strong>${ENV_CONFIG.APP_NAME}</strong>
+              </p>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background:#faf5ff;padding:20px;text-align:center;
+              font-size:12px;color:#777777;">
+              © ${new Date().getFullYear()} ${ENV_CONFIG.APP_NAME}.
+              All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+  return html;
+};
+```

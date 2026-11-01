@@ -36,6 +36,9 @@ export const register = catchAsync(
         public_id,
       };
     }
+    const hashPass = await hashPassword(password);
+    user.password = hashPass;
+    await user.save();
     sendEmail({
       to: user.email,
       subject: "Account Created",
@@ -46,9 +49,6 @@ export const register = catchAsync(
       }),
     });
 
-    const hashPass = await hashPassword(password);
-    user.password = hashPass;
-    await user.save();
     sendResponse(res, {
       message: "Account created",
       statusCode: 201,
@@ -134,6 +134,8 @@ export const logout = catchAsync(
     });
   },
 );
+
+//* email verified
 
 //*change password
 export const changePassword = catchAsync(
