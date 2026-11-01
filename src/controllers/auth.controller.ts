@@ -14,6 +14,7 @@ import {
   forgotPasswordHtml,
   newLoginDetectedHtml,
 } from "../utils/emailTemplate.utils";
+import jwt from "jsonwebtoken"
 
 const uploadFolder = "/profile_images";
 
@@ -136,6 +137,69 @@ export const logout = catchAsync(
 );
 
 //* email verified
+export const verifyEmail = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+
+    const { token } = req.query;
+    if (!token || typeof token !== "string") {
+      throw new appError("Verification token is required", 400);
+    }
+
+    let decoded: jwt.JwtPayload;
+    try {
+      const result = jwt.verify(token, ENV_CONFIG.JWT_SECRET); //verify the token is valid or not
+      if (typeof result === "string") {
+        throw new appError("Invalid verification token", 400);
+      }
+
+      decoded = result;
+    } catch (error) {
+      if (error instanceof appError) {
+        throw error;
+      }
+
+      throw new appError(
+        "Verification token is invalid or has expired",
+        400,
+      );
+    }
+    
+    if (
+      decoded.purpose !== "email-verification" ||
+      typeof decoded.email !== "string"
+    ) {
+      throw new appError("Invalid verification token", 400);
+    }
+
+    const user = await User.findOne({
+      email: decoded.email,
+    });
+
+    if (!user) {
+      throw new appError("User not found", 404);
+    }
+
+    // 5. Check whether the email is already verified
+    if (user.isEmailVerified) {
+      sendResponse(res, {
+        message: "Email is already verified",
+        statusCode: 200,
+        data: null,
+      });
+
+      return;
+    }
+    user.isEmailVerified = true; //update email verification status
+
+    await user.save();
+
+    sendResponse(res, {
+      message: "Email verified successfully",
+      statusCode: 200,
+      data: null,
+    });
+  },
+);
 
 //*change password
 export const changePassword = catchAsync(
