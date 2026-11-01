@@ -32,4 +32,6 @@ export const loginUserSchema = z.object({
       .string("password must be string")
       .min(6, "password must be at least 6 character long"),
   }),
+  params: z.object({}).default({}),
+  query: z.object({}).default({}),
 });
