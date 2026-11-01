@@ -208,10 +208,10 @@ export const forgotPassword = catchAsync(
 //* reset password
 export const resetPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { token, newPassword, conformPassword } = req.body;
-    if (newPassword !== conformPassword) {
+    const { token, newPassword, confirmPassword } = req.body;
+    if (newPassword !== confirmPassword) {
       throw new appError(
-        "New Password and Conform Password doesnot matched",
+        "New Password and Confirm Password doesnot match",
         404,
       );
     }
@@ -227,11 +227,15 @@ export const resetPassword = catchAsync(
 
     const hashPass = await hashPassword(newPassword);
     user.password = hashPass;
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
     await user.save();
     sendResponse(res, {
       statusCode: 200,
       message: "Password reset successfully",
-      data:user,
+      data: null,
     });
   },
 );
