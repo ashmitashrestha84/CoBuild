@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       required: false,
       maxLength: [10, "phone number at most be 10 digit long"],
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
     resetPasswordToken: {
       type: String,
       select: false,
