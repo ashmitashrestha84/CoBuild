@@ -19,3 +19,17 @@ export const registerUserSchema = z.object({
   params: z.object({}).default({}),
   query: z.object({}).default({}),
 });
+
+export const loginUserSchema = z.object({
+  body: z.object({
+    email: z.email({
+      error: (issue) =>
+        issue.input === undefined
+          ? "email is required"
+          : "invalid email format",
+    }),
+    password: z
+      .string("password must be string")
+      .min(6, "password must be at least 6 character long"),
+  }),
+});
