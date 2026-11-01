@@ -7,6 +7,7 @@ import {
   logout,
   register,
   resetPassword,
+  verifyEmail,
 } from "../controllers/auth.controller";
 import { uploader } from "../middleware/multer.middleware";
 import { authenticate } from "../middleware/auth.middleware";
@@ -28,6 +29,7 @@ router.post(
 router.post("/login", validate(loginUserSchema), login);
 router.get("/me", authenticate(), getMe);
 router.post("/logout", authenticate(), logout);
+router.post("/verify-email", verifyEmail);
 router.patch("/change-password", authenticate(), changePassword);
 router.post("/forgot-password", forgotPassword);
 router.patch("/reset-password", resetPassword);
