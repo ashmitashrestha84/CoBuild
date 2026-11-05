@@ -5,10 +5,10 @@ import appError from "../utils/appError.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
 
 //* get by id
-export const getbyID = catchAsync(
+export const getUserbyID = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { _id } = req.params;
-    const user = await User.findOne({ _id: _id });
+    const { id } = req.params;
+    const user = await User.findOne({ _id: id });
     if (!user) {
       throw new appError("User doesnot exist", 404);
     }
