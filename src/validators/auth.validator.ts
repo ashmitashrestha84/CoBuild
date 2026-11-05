@@ -35,3 +35,13 @@ export const loginUserSchema = z.object({
   params: z.object({}).default({}),
   query: z.object({}).default({}),
 });
+
+export const updateProfileSchema = z.object({
+  full_name: z.string().min(3).optional(),
+  phone: z.string().optional(),
+  bio: z.string().max(300).optional(),
+  skills: z.array(z.string()).optional(),
+  github: z.string().url().optional(),
+  linkedin: z.string().url().optional(),
+  portfolio: z.string().url().optional(),
+});
