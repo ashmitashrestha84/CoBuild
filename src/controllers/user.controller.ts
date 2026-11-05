@@ -56,6 +56,35 @@ export const getAllAdmins = catchAsync(
 
 //*updateProfile
 
+export const updateProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { full_name, phone, bio, skills, github, linkedin, portfolio } =req.body;
+    const user = await User.findOne({ _id: req.user._id });
+
+    if (!user) {
+      throw new appError("User does not exist", 404);
+    }
+
+    // Update only the fields provided by the user
+    if (full_name !== undefined) user.full_name = full_name;
+    if (phone !== undefined) user.phone = phone;
+    if (bio !== undefined) user.bio = bio;
+    if (skills !== undefined) user.skills = skills;
+    if (github !== undefined) user.github = github;
+    if (linkedin !== undefined) user.linkedin = linkedin;
+    if (portfolio !== undefined) user.portfolio = portfolio;
+
+    // Save updated information
+    await user.save();
+
+    sendResponse(res, {
+      message: "Profile updated successfully",
+      statusCode: 200,
+      data: user,
+    });
+  },
+);
+
 //*updateProfileImage
 export const updateProfileImage = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
