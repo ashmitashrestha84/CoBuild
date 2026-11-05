@@ -4,10 +4,13 @@ import {
   getAllAdmins,
   getAllUser,
   getUserbyID,
+  updateProfile,
   updateProfileImage,
 } from "../controllers/user.controller";
 import { All_Admin } from "../types/enumtypes";
 import { uploader } from "../middleware/multer.middleware";
+import { validate } from "../middleware/validator.middleware";
+import { updateProfileSchema } from "../validators/auth.validator";
 
 const router = express.Router();
 const upload = uploader();
@@ -20,6 +23,14 @@ router.get("/admin", authenticate(All_Admin), getAllAdmins);
 
 // Get user by ID
 router.get("/:id", authenticate(), getUserbyID);
+
+// update profile
+router.patch(
+  "/profile",
+  authenticate(),
+  validate(updateProfileSchema),
+  updateProfile,
+);
 
 // Update profile image
 router.patch(
