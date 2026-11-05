@@ -5,7 +5,10 @@ import { sendResponse } from "../utils/sendResponse.utils";
 import { comparePassword, hashPassword } from "../utils/bcrypt.utils";
 import appError from "../utils/appError.utils";
 import { IJwtPayLoad } from "../types/globaltypes";
-import { generateJwtToken } from "../utils/jwt.utils";
+import {
+  generateEmailVerificationToken,
+  generateJwtToken,
+} from "../utils/jwt.utils";
 import ENV_CONFIG from "../config/env.config";
 import { upload } from "../utils/cloudinary.utils";
 import { sendEmail } from "../utils/emailService.utils";
@@ -13,8 +16,9 @@ import {
   accountCreatedHtml,
   forgotPasswordHtml,
   newLoginDetectedHtml,
+  verifyEmailHtml,
 } from "../utils/emailTemplate.utils";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 const uploadFolder = "/profile_images";
 
@@ -40,6 +44,7 @@ export const register = catchAsync(
     const hashPass = await hashPassword(password);
     user.password = hashPass;
     await user.save();
+    const verificationToken = generateEmailVerificationToken(user.email);
     sendEmail({
       to: user.email,
       subject: "Account Created",
@@ -47,6 +52,14 @@ export const register = catchAsync(
         full_name: user.full_name,
         email: user.email,
         createdAt: user.createdAt,
+      }),
+    });
+    await sendEmail({
+      to: user.email,
+      subject: "Verify Your CoBuild Email",
+      html: verifyEmailHtml({
+        full_name: user.full_name,
+        verificationToken,
       }),
     });
 
@@ -139,8 +152,7 @@ export const logout = catchAsync(
 //* email verified
 export const verifyEmail = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-
-    const { token } = req.query;
+    const { token } = req.body;
     if (!token || typeof token !== "string") {
       throw new appError("Verification token is required", 400);
     }
@@ -158,12 +170,9 @@ export const verifyEmail = catchAsync(
         throw error;
       }
 
-      throw new appError(
-        "Verification token is invalid or has expired",
-        400,
-      );
+      throw new appError("Verification token is invalid or has expired", 400);
     }
-    
+
     if (
       decoded.purpose !== "email-verification" ||
       typeof decoded.email !== "string"

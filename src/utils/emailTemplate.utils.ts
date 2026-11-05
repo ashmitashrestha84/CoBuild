@@ -380,7 +380,13 @@ export const verifyEmailHtml = ({
                   Verify Email Address
                 </a>
               </div>
+                <p style="font-size:14px;line-height:1.7;color:#555555;">
+                  Or copy this verification token and submit it through Postman:
+                </p>
 
+                <p style="background:#f4f4f7;padding:16px;word-break:break-all;">
+                  <strong>${verificationToken}</strong>
+                </p>
               <p style="font-size:14px;line-height:1.7;color:#555555;">
                 This verification link will expire in 15 minutes.
                 If you did not create an account with ${ENV_CONFIG.APP_NAME},
