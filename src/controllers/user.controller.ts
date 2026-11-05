@@ -19,3 +19,18 @@ export const getUserbyID = catchAsync(
     });
   },
 );
+
+//* get all
+export const getAllUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.find();
+    if (!user || user.length === 0) {
+      throw new appError("No User found", 404);
+    }
+    sendResponse(res, {
+      message: "User fetched Successfully",
+      data: user,
+      statusCode: 200,
+    });
+  },
+);
