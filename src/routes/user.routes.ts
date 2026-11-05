@@ -8,7 +8,7 @@ const router = express.Router();
 const upload=uploader()
 router.get("/:id", authenticate(), getUserbyID);
 router.get("/", authenticate(All_Admin), getAllUser);
-router.post(
+router.patch(
   "/profile-image",
   upload.single("profile_image"),
   authenticate(),

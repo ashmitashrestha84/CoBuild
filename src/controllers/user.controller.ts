@@ -4,7 +4,7 @@ import User from "../model/usermodel";
 import appError from "../utils/appError.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
 import { deleteFile, upload } from "../utils/cloudinary.utils";
-import { file } from "zod";
+import { Role } from "../types/enumtypes";
 const uploadFolder = "/profile_image";
 //* get by id
 export const getUserbyID = catchAsync(
@@ -25,7 +25,7 @@ export const getUserbyID = catchAsync(
 //* get all
 export const getAllUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user = await User.find();
+    const user = await User.find({ role: Role.USER });
     if (!user || user.length === 0) {
       throw new appError("No User found", 404);
     }
@@ -33,6 +33,23 @@ export const getAllUser = catchAsync(
       message: "User fetched Successfully",
       data: user,
       statusCode: 200,
+    });
+  },
+);
+
+//* get all admin
+export const getAllAdmins = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const admins = await User.find({
+      role: {
+        $in: [Role.ADMIN, Role.SUPER_ADMIN],
+      },
+    });
+    res.status(201).json({
+      message: "User fetched",
+      status: "Success",
+      success: true,
+      data: admins,
     });
   },
 );
@@ -59,11 +76,11 @@ export const updateProfileImage = catchAsync(
       public_id,
     };
     await user.save();
-    sendResponse(res,{
-        message:"Profile Image updated Successfully",
-        statusCode:200,
-        data:null,
-    })
+    sendResponse(res, {
+      message: "Profile Image updated Successfully",
+      statusCode: 200,
+      data: null,
+    });
   },
 );
 
