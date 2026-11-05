@@ -1,17 +1,32 @@
 import express from "express";
 import { authenticate } from "../middleware/auth.middleware";
-import { getAllUser, getUserbyID, updateProfileImage } from "../controllers/user.controller";
+import {
+  getAllAdmins,
+  getAllUser,
+  getUserbyID,
+  updateProfileImage,
+} from "../controllers/user.controller";
 import { All_Admin } from "../types/enumtypes";
 import { uploader } from "../middleware/multer.middleware";
 
 const router = express.Router();
-const upload=uploader()
+const upload = uploader();
+
+// Get all users (Admin and Super Admin)
+router.get("/users", authenticate(All_Admin), getAllUser);
+
+// Get all admins (Admin and Super Admin)
+router.get("/admin", authenticate(All_Admin), getAllAdmins);
+
+// Get user by ID
 router.get("/:id", authenticate(), getUserbyID);
-router.get("/", authenticate(All_Admin), getAllUser);
+
+// Update profile image
 router.patch(
   "/profile-image",
-  upload.single("profile_image"),
   authenticate(),
-  updateProfileImage
+  upload.single("profile_image"),
+  updateProfileImage,
 );
+
 export default router;
