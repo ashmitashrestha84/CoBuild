@@ -1,6 +1,7 @@
 import express from "express";
 import { authenticate } from "../middleware/auth.middleware";
 import {
+  deleteUser,
   getAllAdmins,
   getAllUser,
   getUserbyID,
@@ -11,7 +12,10 @@ import {
 import { All_Admin } from "../types/enumtypes";
 import { uploader } from "../middleware/multer.middleware";
 import { validate } from "../middleware/validator.middleware";
-import { searchProfileSchema, updateProfileSchema } from "../validators/user.validator";
+import {
+  searchProfileSchema,
+  updateProfileSchema,
+} from "../validators/user.validator";
 
 const router = express.Router();
 const upload = uploader();
@@ -23,7 +27,12 @@ router.get("/users", authenticate(All_Admin), getAllUser);
 router.get("/admin", authenticate(All_Admin), getAllAdmins);
 
 //search user
-router.get("/search",authenticate(),validate(searchProfileSchema),searchUsers)
+router.get(
+  "/search",
+  authenticate(),
+  validate(searchProfileSchema),
+  searchUsers,
+);
 
 // Get user by ID
 router.get("/:id", authenticate(), getUserbyID);
@@ -44,4 +53,6 @@ router.patch(
   updateProfileImage,
 );
 
+// Delete user
+router.delete("/delete-account", authenticate(), deleteUser);
 export default router;
