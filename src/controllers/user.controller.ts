@@ -5,7 +5,6 @@ import appError from "../utils/appError.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
 import { deleteFile, upload } from "../utils/cloudinary.utils";
 import { Role } from "../types/enumtypes";
-import app from "../app";
 const uploadFolder = "/profile_image";
 
 //* get by id
