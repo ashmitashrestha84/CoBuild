@@ -5,4 +5,6 @@ import { createProject } from "../controllers/project.controller";
 const router = express.Router();
 
 //create project
-router.post("/create project", authenticate(), createProject);
+router.post("/create", authenticate(), createProject);
+
+export default router
