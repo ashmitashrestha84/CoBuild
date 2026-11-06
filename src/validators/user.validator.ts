@@ -23,3 +23,11 @@ export const updateProfileSchema = z.object({
   params: z.object({}).default({}),
   query: z.object({}).default({}),
 });
+
+export const searchProfileSchema = z.object({
+  body: z.object({}).default({}),
+  params: z.object({}).default({}),
+  query: z.object({
+    q: z.string().min(2, "Search must contain at least 2 characters"),
+  }),
+});
