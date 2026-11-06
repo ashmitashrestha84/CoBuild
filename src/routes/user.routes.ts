@@ -10,7 +10,7 @@ import {
 import { All_Admin } from "../types/enumtypes";
 import { uploader } from "../middleware/multer.middleware";
 import { validate } from "../middleware/validator.middleware";
-import { updateProfileSchema } from "../validators/auth.validator";
+import { updateProfileSchema } from "../validators/user.validator";
 
 const router = express.Router();
 const upload = uploader();

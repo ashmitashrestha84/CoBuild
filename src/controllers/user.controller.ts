@@ -113,6 +113,29 @@ export const updateProfileImage = catchAsync(
   },
 );
 
-//*earchUsers
+//*searchUsers
+export const searchUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const search = String(req.query.q).trim();
+    const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const searchRegex = new RegExp(escapedSearch, "i");
+
+    const users = await User.find({
+      _id: { $ne: req.user._id }, //$ne:excludes the id of the cureently loginuser and provide the id for the search user 
+      $or: [    //$or:search by either name or skill
+        { full_name: searchRegex },
+        { skills: searchRegex },
+      ],
+    }).select(
+      "full_name profile_image bio skills github linkedin portfolio"
+    );
+
+    sendResponse(res, {
+      message: "Users fetched successfully",
+      statusCode: 200,
+      data: users,
+    });
+  }
+);
+
 
 //*deleteUser
