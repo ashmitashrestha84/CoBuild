@@ -5,7 +5,9 @@ import appError from "../utils/appError.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
 import { deleteFile, upload } from "../utils/cloudinary.utils";
 import { Role } from "../types/enumtypes";
+import app from "../app";
 const uploadFolder = "/profile_image";
+
 //* get by id
 export const getUserbyID = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -58,7 +60,8 @@ export const getAllAdmins = catchAsync(
 
 export const updateProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { full_name, phone, bio, skills, github, linkedin, portfolio } =req.body;
+    const { full_name, phone, bio, skills, github, linkedin, portfolio } =
+      req.body;
     const user = await User.findOne({ _id: req.user._id });
 
     if (!user) {
@@ -114,28 +117,45 @@ export const updateProfileImage = catchAsync(
 );
 
 //*searchUsers
-export const searchUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const searchUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const search = String(req.query.q).trim();
     const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const searchRegex = new RegExp(escapedSearch, "i");
 
     const users = await User.find({
-      _id: { $ne: req.user._id }, //$ne:excludes the id of the cureently loginuser and provide the id for the search user 
-      $or: [    //$or:search by either name or skill
+      _id: { $ne: req.user._id }, //$ne:excludes the id of the cureently loginuser and provide the id for the search user
+      $or: [
+        //$or:search by either name or skill
         { full_name: searchRegex },
         { skills: searchRegex },
       ],
-    }).select(
-      "full_name profile_image bio skills github linkedin portfolio"
-    );
+    }).select("full_name profile_image bio skills github linkedin portfolio");
 
     sendResponse(res, {
       message: "Users fetched successfully",
       statusCode: 200,
       data: users,
     });
-  }
+  },
 );
 
-
 //*deleteUser
+export const deleteUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findOne({ _id: req.user._id });
+    if (!user) {
+      throw new appError("User doesnot exist", 404);
+    }
+    if (user.profile_image?.public_id) {
+      await deleteFile(user.profile_image.public_id);
+    }
+    await user.deleteOne();
+
+    sendResponse(res, {
+      message: "Account deleted successfully",
+      statusCode: 200,
+      data: null,
+    });
+  },
+);
