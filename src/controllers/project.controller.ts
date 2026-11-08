@@ -87,6 +87,20 @@ export const getProjectById = catchAsync(
 );
 
 //* Get My Projects
+export const getmyProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const project = await Project.find({ owner: req.user._id });
+
+    if (project.length === 0) {
+      throw new appError("You have not created any projects yet", 404);
+    }
+    sendResponse(res, {
+      message: "Project fetched successfully",
+      statusCode: 200,
+      data: project,
+    });
+  },
+);
 
 //* Update Project
 
