@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync.utils";
 import Project from "../model/projectmodel";
-import { upload } from "../utils/cloudinary.utils";
+import { deleteFile, upload } from "../utils/cloudinary.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
 import appError from "../utils/appError.utils";
 import { ProjectVisibility } from "../types/enumtypes";
@@ -139,6 +139,41 @@ export const updateProject = catchAsync(
       message: "Project updated successfully",
       statusCode: 200,
       data: project,
+    });
+  },
+);
+
+//* update cover-image
+//* updateProjectCoverImage
+export const updateProjectCoverImage = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const file = req.file;
+    const { id } = req.params;
+    if (!file) {
+      throw new appError("cover_image is required", 400);
+    }
+    const project = await Project.findOne({
+      _id: id,
+      owner: req.user._id,
+    });
+
+    if (!project) {
+      throw new appError("Project not found or you are not the owner", 404);
+    }
+    const oldPublicId = project.cover_image?.public_id;
+    const { path, public_id } = await upload(file, uploadFolder);
+    project.cover_image = {
+      path,
+      public_id,
+    };
+
+    await project.save();
+    if (oldPublicId) {
+      await deleteFile(oldPublicId);
+    }
+    sendResponse(res, {
+      message: "Project Cover Image updated successfully",
+      statusCode: 200,
+      data: null,
     });
   },
 );
