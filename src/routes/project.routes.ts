@@ -22,9 +22,10 @@ router.post(
 //get all project
 router.get("/", authenticate(), getAllProject);
 
+//get my project
+router.get("/myProject", authenticate(), getmyProject);
+
 //get project by id
 router.get("/:id", authenticate(), getProjectById);
 
-//get my project
-router.get("/myproject", authenticate(), getmyProject);
 export default router;

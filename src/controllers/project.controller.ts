@@ -103,7 +103,45 @@ export const getmyProject = catchAsync(
 );
 
 //* Update Project
+export const updateProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const {
+      id,
+      title,
+      description,
+      category,
+      tech_stack,
+      status,
+      visibility,
+      required_skills,
+      github_url,
+      demo_url,
+    } = req.body;
+    const project = await Project.findOne({ _id: id, owner: req.user._id });
 
+    if (!project) {
+      throw new appError("Project not found or you are not the owner", 404);
+    }
+    if (title !== undefined) project.title = title;
+    if (description !== undefined) project.description = description;
+    if (category !== undefined) project.category = category;
+    if (tech_stack !== undefined) project.tech_stack = tech_stack;
+    if (status !== undefined) project.status = status;
+    if (visibility !== undefined) project.visibility = visibility;
+    if (required_skills !== undefined)
+      project.required_skills = required_skills;
+    if (github_url !== undefined) project.github_url = github_url;
+    if (demo_url !== undefined) project.demo_url = demo_url;
+
+    await project.save();
+
+    sendResponse(res, {
+      message: "Project updated successfully",
+      statusCode: 200,
+      data: project,
+    });
+  },
+);
 //* Delete Project
 
-//* Search Projects
+//* Search Project
