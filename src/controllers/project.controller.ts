@@ -179,5 +179,29 @@ export const updateProjectCoverImage = catchAsync(
 );
 
 //* Delete Project
+//* deleteProject
+export const deleteProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const project = await Project.findOne({
+      _id: id,
+      owner: req.user._id,
+    });
+
+    if (!project) {
+      throw new appError("Project not found or you are not the owner", 404);
+    }
+    if (project.cover_image?.public_id) {
+      await deleteFile(project.cover_image.public_id);
+    }
+
+    await project.deleteOne();
+    sendResponse(res, {
+      message: "Project deleted successfully",
+      statusCode: 200,
+      data: null,
+    });
+  },
+);
 
 //* Search Project
