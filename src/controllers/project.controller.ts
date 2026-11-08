@@ -106,7 +106,6 @@ export const getmyProject = catchAsync(
 export const updateProject = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const {
-      id,
       title,
       description,
       category,
@@ -117,6 +116,7 @@ export const updateProject = catchAsync(
       github_url,
       demo_url,
     } = req.body;
+    const { id } = req.params;
     const project = await Project.findOne({ _id: id, owner: req.user._id });
 
     if (!project) {
@@ -144,8 +144,8 @@ export const updateProject = catchAsync(
 );
 
 //* update cover-image
-//* updateProjectCoverImage
-export const updateProjectCoverImage = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const updateProjectCoverImage = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const file = req.file;
     const { id } = req.params;
     if (!file) {
@@ -177,6 +177,7 @@ export const updateProjectCoverImage = catchAsync(async (req: Request, res: Resp
     });
   },
 );
+
 //* Delete Project
 
 //* Search Project

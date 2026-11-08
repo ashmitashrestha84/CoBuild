@@ -6,6 +6,7 @@ import {
   getmyProject,
   getProjectById,
   updateProject,
+  updateProjectCoverImage,
 } from "../controllers/project.controller";
 import { uploader } from "../middleware/multer.middleware";
 
@@ -30,6 +31,14 @@ router.get("/myProject", authenticate(), getmyProject);
 router.get("/:id", authenticate(), getProjectById);
 
 //update project
-router.patch("/update-project", authenticate(), updateProject);
+router.patch("/:id/update-project", authenticate(), updateProject);
+
+//update cover-image
+router.patch(
+  "/:id/cover-image",
+  authenticate(),
+  upload.single("cover_image"),
+  updateProjectCoverImage,
+);
 
 export default router;
