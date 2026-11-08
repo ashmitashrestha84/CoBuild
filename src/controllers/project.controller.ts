@@ -71,6 +71,20 @@ export const getAllProject = catchAsync(
 );
 
 //* Get Project by ID
+export const getProjectById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { _id } = req.params;
+    const project = await Project.findOne({ _id: _id });
+    if (!project) {
+      throw new appError("No project found", 404);
+    }
+    sendResponse(res, {
+      message: "Project fetched successfully",
+      statusCode: 200,
+      data: project,
+    });
+  },
+);
 
 //* Get My Projects
 
