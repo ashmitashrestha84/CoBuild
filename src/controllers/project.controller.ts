@@ -3,9 +3,9 @@ import { catchAsync } from "../utils/catchAsync.utils";
 import Project from "../model/projectmodel";
 import { upload } from "../utils/cloudinary.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
+import appError from "../utils/appError.utils";
 
-const cover_image = "/cover-image";
-
+const uploadFolder = "/cover-image";
 
 //* Create Project
 export const createProject = catchAsync(
@@ -35,22 +35,36 @@ export const createProject = catchAsync(
       demo_url,
     });
     if (file) {
-      const { path, public_id } = await upload(file, cover_image);
+      const { path, public_id } = await upload(file, uploadFolder);
       project.cover_image = {
         path,
         public_id,
       };
-      await project.save();
-      sendResponse(res, {
-        message: "Project created successfully",
-        statusCode: 201,
-        data: project,
-      });
     }
+    await project.save();
+    sendResponse(res, {
+      message: "Project created successfully",
+      statusCode: 201,
+      data: project,
+    });
   },
 );
 
 //* Get All Projects
+export const getAllProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const {_id}=req.body
+    const project = await Project.find({ _id:_id });
+    if(!project){
+      throw new appError("No project exists",404);
+    }
+    sendResponse(res,{
+      message:"Project fetched successfully",
+      statusCode:200,
+      data:project
+    })
+  },
+);
 
 //* Get Project by ID
 
