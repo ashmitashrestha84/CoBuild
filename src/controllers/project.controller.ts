@@ -205,3 +205,33 @@ export const deleteProject = catchAsync(
 );
 
 //* Search Project
+//* searchProjects
+export const searchProjects = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const search = String(req.query.q || "").trim();
+
+    if (!search) {
+      throw new appError("Search query is required", 400);
+    }
+
+    const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const searchRegex = new RegExp(escapedSearch, "i");
+
+    const projects = await Project.find({
+      visibility: ProjectVisibility.PUBLIC,
+      $or: [
+        { title: searchRegex },
+        { description: searchRegex },
+        { category: searchRegex },
+        { tech_stack: searchRegex },
+        { required_skills: searchRegex },
+      ],
+    }).populate("owner", "full_name profile_image");
+
+    sendResponse(res, {
+      message: "Projects fetched successfully",
+      statusCode: 200,
+      data: projects,
+    });
+  },
+);
