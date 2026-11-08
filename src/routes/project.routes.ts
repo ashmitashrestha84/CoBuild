@@ -6,6 +6,7 @@ import {
   getAllProject,
   getmyProject,
   getProjectById,
+  searchProjects,
   updateProject,
   updateProjectCoverImage,
 } from "../controllers/project.controller";
@@ -30,6 +31,9 @@ router.get("/myProject", authenticate(), getmyProject);
 
 //get project by id
 router.get("/:id", authenticate(), getProjectById);
+
+// Search projects
+router.get("/search", authenticate(), searchProjects);
 
 //update project
 router.patch("/:id/update-project", authenticate(), updateProject);
