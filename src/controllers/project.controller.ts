@@ -4,6 +4,7 @@ import Project from "../model/projectmodel";
 import { upload } from "../utils/cloudinary.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
 import appError from "../utils/appError.utils";
+import { ProjectVisibility } from "../types/enumtypes";
 
 const uploadFolder = "/cover-image";
 
@@ -53,16 +54,19 @@ export const createProject = catchAsync(
 //* Get All Projects
 export const getAllProject = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const {_id}=req.body
-    const project = await Project.find({ _id:_id });
-    if(!project){
-      throw new appError("No project exists",404);
+    const projects = await Project.find({
+      visibility: ProjectVisibility.PUBLIC,
+    });
+
+    if (projects.length === 0) {
+      throw new appError("No projects found", 404);
     }
-    sendResponse(res,{
-      message:"Project fetched successfully",
-      statusCode:200,
-      data:project
-    })
+
+    sendResponse(res, {
+      message: "Projects fetched successfully",
+      statusCode: 200,
+      data: projects,
+    });
   },
 );
 
