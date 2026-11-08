@@ -2,6 +2,7 @@ import express from "express";
 import { authenticate } from "../middleware/auth.middleware";
 import {
   createProject,
+  deleteProject,
   getAllProject,
   getmyProject,
   getProjectById,
@@ -40,5 +41,8 @@ router.patch(
   upload.single("cover_image"),
   updateProjectCoverImage,
 );
+
+// Delete project
+router.delete("/:id", authenticate(), deleteProject);
 
 export default router;
