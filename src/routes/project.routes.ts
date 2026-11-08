@@ -5,6 +5,7 @@ import {
   getAllProject,
   getmyProject,
   getProjectById,
+  updateProject,
 } from "../controllers/project.controller";
 import { uploader } from "../middleware/multer.middleware";
 
@@ -27,5 +28,8 @@ router.get("/myProject", authenticate(), getmyProject);
 
 //get project by id
 router.get("/:id", authenticate(), getProjectById);
+
+//update project
+router.patch("/update-project", authenticate(), updateProject);
 
 export default router;
