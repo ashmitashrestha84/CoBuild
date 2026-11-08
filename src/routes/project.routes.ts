@@ -3,6 +3,7 @@ import { authenticate } from "../middleware/auth.middleware";
 import {
   createProject,
   getAllProject,
+  getmyProject,
   getProjectById,
 } from "../controllers/project.controller";
 import { uploader } from "../middleware/multer.middleware";
@@ -23,4 +24,7 @@ router.get("/", authenticate(), getAllProject);
 
 //get project by id
 router.get("/:id", authenticate(), getProjectById);
+
+//get my project
+router.get("/myproject", authenticate(), getmyProject);
 export default router;
