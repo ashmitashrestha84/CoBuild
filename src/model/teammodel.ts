@@ -47,6 +47,23 @@ const teamSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+//ensure leader is in member list
+teamSchema.pre("validate", function () {
+  if (
+    this.leader &&
+    !this.members.some((member) => member.toString() === this.leader.toString())
+  ) {
+    this.members.push(this.leader);
+  }
+});
+
+// Prevent duplicate members
+teamSchema.path("members").validate(function (members) {
+  const memberIds = members.map((member:any) => member.toString());
+
+  return new Set(memberIds).size === memberIds.length;
+}, "Duplicate team members are not allowed");
 
 const Team = mongoose.model("team", teamSchema);
+
 export default Team;
