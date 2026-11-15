@@ -15,3 +15,17 @@ export const createJoinRequestSchema = z.object({
   params: z.object({}).default({}),
   query: z.object({}).default({}),
 });
+
+export const getProjectRequestsSchema = z.object({
+  body: z.object({}).default({}),
+
+  params: z.object({
+    projectId: z.string().regex(/^[0-9a-fA-F]{24}$/, "invalid project ID"),
+  }),
+
+  query: z.object({
+    page: z.coerce.number().int().min(1).default(1),
+
+    limit: z.coerce.number().int().min(1).max(100).default(10),
+  }),
+});
