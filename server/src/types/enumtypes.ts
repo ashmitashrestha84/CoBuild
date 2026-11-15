@@ -17,3 +17,10 @@ export enum ProjectVisibility {
   PUBLIC = "PUBLIC",
   PRIVATE = "PRIVATE",
 }
+
+export enum RequestStatus{
+  PENDING="PENDING",
+  ACCEPTED="ACCEPTED",
+  REJECTED="REJECTED",
+  CANCELLED="CANCELLED",
+}
