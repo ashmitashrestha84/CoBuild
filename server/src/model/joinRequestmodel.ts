@@ -45,6 +45,16 @@ const joinRequestSchema = new mongoose.Schema(
   }
 );
 
+// Prevent duplicate pending requests
+joinRequestSchema.index(
+  { project: 1, requester: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: RequestStatus.PENDING,
+    },
+  }
+);
 
 const JoinRequest = mongoose.model("joinRequest", joinRequestSchema);
 
