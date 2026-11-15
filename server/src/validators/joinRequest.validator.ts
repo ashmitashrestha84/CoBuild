@@ -29,3 +29,13 @@ export const getProjectRequestsSchema = z.object({
     limit: z.coerce.number().int().min(1).max(100).default(10),
   }),
 });
+
+export const joinRequestIdSchema = z.object({
+  body: z.object({}).default({}),
+
+  params: z.object({
+    id: z.string().regex(/^[0-9a-fA-F]{24}$/, "invalid join request ID"),
+  }),
+
+  query: z.object({}).default({}),
+});
