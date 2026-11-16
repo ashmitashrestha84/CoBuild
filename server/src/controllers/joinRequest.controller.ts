@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync.utils";
 import appError from "../utils/appError.utils";
 import Project from "../model/projectmodel";
-import { appendFile } from "node:fs";
 import { ProjectStatus, RequestStatus } from "../types/enumtypes";
 import Team from "../model/teammodel";
 import JoinRequest from "../model/joinRequestmodel";
