@@ -10,6 +10,7 @@ import { sendResponse } from "../utils/sendResponse.utils";
 //*createJoinRequest
 export const createJoinRequest = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log("createJoinRequest controller reached");
     const { message } = req.body;
     const { projectId } = req.params;
     const projectData = await Project.findOne({ _id: projectId });
@@ -59,6 +60,7 @@ export const createJoinRequest = catchAsync(
     });
   },
 );
+
 //*getProjectJoinRequests
 //* getMyJoinRequests
 //* acceptJoinRequest

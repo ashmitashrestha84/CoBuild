@@ -6,8 +6,9 @@ import { createJoinRequestSchema } from "../validators/joinRequest.validator";
 
 const router = express.Router();
 router.post(
-  "/join-request/:projectId",
+  "/project/:projectId",
   authenticate,
   validate(createJoinRequestSchema),
   createJoinRequest,
 );
+export default router;
